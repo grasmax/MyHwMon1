@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MyHwMon1 (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "MyHwMon1 (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

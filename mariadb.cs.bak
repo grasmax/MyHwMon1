@@ -1,0 +1,58 @@
+﻿// KI-generierter Code für Schreiben in MariaDB
+
+using System;
+using MySqlConnector;
+
+namespace MyHwMon1
+{
+    public partial class MainWindow // die Klasse MainWindow ist in MainWindow.xaml.cs definiert
+    {
+        private void WriteDb( double dAuslastung, double dLeistung, double dAggr, double dAggrEff, int iTctl, int iTdie)
+        {
+            // Verbindungsdaten definieren, dass Passwort darf natürlich nicht lesbar im Quelltext stehen:
+            string connString = "Server=192.168.2.28;Port=3306;Database=myhwmon;User ID=master;Password=raspi;";
+
+            using (var connection = new MySqlConnection(connString))
+            {
+                try
+                {
+                    connection.Open();// Verbindung öffnen
+
+                    string insertSql = @"INSERT INTO t_monitor (Zeitpunkt, Computername, Tctl, Tdie, Auslastung, Leistung, Aggr, AggrEff, Bemerkung) 
+                        VALUES (SYSDATE(), @PC, @Tctl, @Tdie, @Auslastung, @Leistung, @Aggr, @AggrEff, @Bemerkung)";
+
+                    using (var insertCmd = new MySqlCommand(insertSql, connection))
+                    {
+                        // Parameter verwenden, um SQL-Injection zu verhindern
+                        // --> die Werte werden nicht direkt ins insert-Statementgeschrieben,
+                        // sondern einzeln "gebunden":
+
+                        string sPc = Environment.MachineName;
+                        insertCmd.Parameters.AddWithValue("@PC", sPc.Substring(0,Math.Min(20,sPc.Length)));
+                        insertCmd.Parameters.AddWithValue("@Tctl", iTctl);
+                        insertCmd.Parameters.AddWithValue("@Tdie", iTdie);
+                        insertCmd.Parameters.AddWithValue("@Auslastung", dAuslastung);
+                        insertCmd.Parameters.AddWithValue("@Leistung", dLeistung);
+                        insertCmd.Parameters.AddWithValue("@Aggr", dAggr);
+                        insertCmd.Parameters.AddWithValue("@AggrEff", dAggrEff);
+
+                        insertCmd.Parameters.AddWithValue("@Bemerkung", "");
+
+                        //Alternative zu SYSDATE():
+                        //insertCmd.Parameters.AddWithValue("@datum", DateTime.Now);
+
+                        int rowsAffected = insertCmd.ExecuteNonQuery();
+                        Console.WriteLine($"{rowsAffected} Zeile(n) eingefügt.");
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Fehler: " + ex.Message);
+                }
+                // 2. Verbindung schließen (erfolgt automatisch durch das 'using'-Statement)
+            }
+
+        }
+    }
+}
