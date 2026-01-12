@@ -1,4 +1,4 @@
-//Quelle https://www.nuget.org/packages/LibreHardwareMonitorLib/0.9.6-pre600  / https://github.com/LibreHardwareMonitor/LibreHardwareMonitor
+//Quelle https://www.nuget.org/packages/OpenHardwareMonitorLib / https://github.com/HardwareMonitor/OpenHardwareMonitor
 //Liefert u.a. diese Werte:
 //  Hardware: AMD Ryzen 7 7800X3D
 //  Auslastung
